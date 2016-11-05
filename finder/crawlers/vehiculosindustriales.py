@@ -1,3 +1,4 @@
+from re import findall
 from .crawler import Crawler
 
 
@@ -41,25 +42,25 @@ class VehiculosIndustrialesCrawler(Crawler):
     def get_result(self, item):
         url = item.get('href')
         price_item = item.select_one(".precio").get_text()
-        price = super().re_findone(r"([0-9\. €]+)", price_item)
+        price = findall(r"([0-9\.]+)", price_item)[0]
         photo = item.select_one('.xfoto .p')
 
         if photo:
-            photo = super().re_findone(r"\('(.+)'\)", photo.get('style'))
+            photo = findall(r"\('(.+)'\)", photo.get('style'))[0]
 
         return {
             "provider": "vehiculosindustriales",
-            "identifier": super().re_findone(r"-(\d+)\.htm", url),
+            "identifier": findall(r"-(\d+)\.htm", url)[0],
             "title": item.get('title'),
-            "photo_url": (self.base_url + photo) if photo else None,
+            "photo_url": photo,
             "province": item.select_one(".provincia").get_text(),
             "fuel_type": item.select_one(".combustible").get_text(),
             "km": item.select_one(".km").get_text(),
             "year": item.select_one(".anio").get_text(),
-            "price": price,
+            "price": int(price.replace('.', '')),
             "description": '',
             "allow_finance": bool(item.select_one(".precio .finan_grid")),
-            "url": url,
+            "url": self.base_url + url,
         }
 
     def get_content(self, page=1):

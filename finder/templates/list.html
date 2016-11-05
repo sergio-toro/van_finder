@@ -1,0 +1,49 @@
+{% extends "index.html" %}
+{% load l10n %}
+
+{% block title %}Van finder - List{% endblock %}
+
+{% block content %}
+
+{% if results %}
+    <h1>
+        Fiat Ducato results
+    </h1>
+
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Photo</th>
+                <th>Title</th>
+                <th>Province</th>
+                <th>Fuel type</th>
+                <th>Km</th>
+                <th>Year</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for result in results %}
+            <tr>
+                <td>
+                    {% if result.photo_url %}
+                    <a href="{{ result.url }}" target="_blank">
+                        <img src="{{ result.photo_url }}" alt="{{ result.title }}">
+                    </a>
+                    {% endif %}
+                </td>
+                <td>{{ result.title }}</td>
+                <td>{{ result.province }}</td>
+                <td>{{ result.fuel_type }}</td>
+                <td>{{ result.km }}</td>
+                <td>{{ result.year }}</td>
+                <td>{{ result.price|localize }} €</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>No results are available.</p>
+{% endif %}
+
+{% endblock %}

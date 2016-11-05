@@ -1,4 +1,4 @@
-# from django.shortcuts import render
+from django.shortcuts import render
 from django.http import HttpResponse
 
 import json
@@ -9,21 +9,34 @@ from finder.models import Result
 
 # Create your views here.
 def index(request):
+    results = Result.objects.all()[:10]
+    return render(request, 'list.html', {
+        "results": results,
+    })
+
+
+def create(request):
     parser = VehiculosIndustrialesCrawler()
     results = parser.get_results()
     for item in results:
-        Result.objects.update_or_create(
-            title=item['title'],
-            fuel_type=item['fuel_type'],
-            year=item['year'],
-            km=item['km'],
-            provider=item['provider'],
-            identifier=item['identifier'],
-            url=item['url'],
-            photo_url=item['photo_url'],
-            description=item['description'],
-            allow_finance=item['allow_finance'],
-        )
+        try:
+            result = Result.objects.get(provider=item['provider'], identifier=item['identifier'])
+        except Result.DoesNotExist:
+            result = Result(
+                provider=item['provider'],
+                identifier=item['identifier'],
+            )
+        result.url = item['url']
+        result.province = item['province']
+        result.photo_url = item['photo_url']
+        result.description = item['description']
+        result.allow_finance = item['allow_finance']
+        result.fuel_type = item['fuel_type']
+        result.year = item['year']
+        result.km = item['km']
+        result.title = item['title']
+        result.price = item['price']
+        result.save()
 
     return HttpResponse(
         "<pre>" +
