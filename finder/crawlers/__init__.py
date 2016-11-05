@@ -1,0 +1,1 @@
+from .vehiculosindustriales import VehiculosIndustrialesCrawler

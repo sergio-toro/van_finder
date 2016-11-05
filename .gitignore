@@ -1,0 +1,14 @@
+
+/bin/
+
+/db.sqlite3
+
+/include/
+
+/src/
+
+/lib/
+
+/pip-selfcheck.json
+
+__pycache__
