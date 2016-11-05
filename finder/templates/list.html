@@ -32,7 +32,11 @@
                     </a>
                     {% endif %}
                 </td>
-                <td>{{ result.title }}</td>
+                <td>
+                    <a href="{{ result.url }}" target="_blank">
+                        {{ result.title }}
+                    </a>
+                </td>
                 <td>{{ result.province }}</td>
                 <td>{{ result.fuel_type }}</td>
                 <td>{{ result.km }}</td>

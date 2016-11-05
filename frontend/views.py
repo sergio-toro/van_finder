@@ -9,7 +9,7 @@ from finder.models import Result
 
 # Create your views here.
 def index(request):
-    results = Result.objects.all()[:10]
+    results = Result.objects.all()
     return render(request, 'list.html', {
         "results": results,
     })
