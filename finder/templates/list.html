@@ -5,6 +5,12 @@
 
 {% block content %}
 
+<style type="text/css">
+    #results_list .viewed {
+        opacity: .5;
+    }
+</style>
+
 <h1>
     Fiat Ducato results
 </h1>
@@ -36,7 +42,7 @@
 <br />
 
 {% if results_list %}
-    <table class="table table-bordered table-hover">
+    <table id="results_list" class="table table-bordered table-hover">
         <thead>
             <tr>
                 <th>Photo</th>
@@ -46,11 +52,15 @@
                 <th>Km</th>
                 <th>Year</th>
                 <th>Price</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
         {% for result in results_list %}
-            <tr>
+            <tr
+                data-id="{{ result.pk }}"
+                class="result {{ result.viewed|yesno:'viewed,' }}"
+            >
                 <td>
                     {% if result.photo_url %}
                     <a href="{{ result.url }}" target="_blank">
@@ -68,6 +78,7 @@
                 <td>{{ result.km }}</td>
                 <td>{{ result.year }}</td>
                 <td>{{ result.price|localize }} €</td>
+                <td>{{ result.created|time:"u" }}</td>
             </tr>
         {% endfor %}
         </tbody>
@@ -75,16 +86,23 @@
     {% if is_paginated %}
     <div class="pagination">
         <span class="step-links">
+            {% if page_obj.number > 2 %}
+                <a class="btn btn-secondary btn-sm" href="?page=1">&laquo;</a>
+            {% endif %}
+
             {% if page_obj.has_previous %}
-                <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                <a class="btn btn-secondary btn-sm" href="?page={{ page_obj.previous_page_number }}">&lt;</a>
             {% endif %}
 
             <span class="current">
-                Page {{ page_obj.number }} of {{ paginator.num_pages }}.
+                page <strong>{{ page_obj.number }}</strong> of {{ paginator.num_pages }}
             </span>
 
             {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}">next</a>
+                <a class="btn btn-secondary btn-sm" href="?page={{ page_obj.next_page_number }}">&gt;</a>
+            {% endif %}
+            {% if page_obj.number < paginator.num_pages and paginator.num_pages != page_obj.next_page_number %}
+                <a class="btn btn-secondary btn-sm" href="?page={{ paginator.num_pages }}">&raquo;</a>
             {% endif %}
         </span>
     </div>
@@ -92,5 +110,30 @@
 {% else %}
     <p>No results are available.</p>
 {% endif %}
+
+<script type="text/javascript">
+
+    $(function() {
+        var list_url = "{% url 'list' %}";
+        $('body')
+            .on('click', '#results_list .result', function(e) {
+                var $result = $(this);
+                var data = {
+                    id: $result.data('id'),
+                    action: 'viewed',
+                };
+
+                $.post(list_url, data, function(response) {
+                    if (response.result.viewed) {
+                        $result.addClass('viewed');
+                    }
+                    else {
+                        $result.removeClass('viewed');
+                    }
+                })
+            })
+        ;
+    })
+</script>
 
 {% endblock %}
