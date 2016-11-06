@@ -16,7 +16,7 @@ class Result(models.Model):
     allow_finance = models.NullBooleanField(blank=True, null=True)
     viewed = models.BooleanField(default=False)
     rating = models.PositiveSmallIntegerField(default=1)
-    created = models.DateTimeField(auto_now=False, auto_now_add=True)
+    created = models.DateTimeField(auto_now=False, auto_now_add=True, db_index=True)
 
     class Meta:
         unique_together = ('provider', 'identifier')

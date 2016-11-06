@@ -1,18 +1,8 @@
-from django.shortcuts import render
 from django.http import HttpResponse
 
 import json
-
 from finder.crawlers import VehiculosIndustrialesCrawler
 from finder.models import Result
-
-
-# Create your views here.
-def index(request):
-    results = Result.objects.all()
-    return render(request, 'list.html', {
-        "results": results,
-    })
 
 
 def create(request):

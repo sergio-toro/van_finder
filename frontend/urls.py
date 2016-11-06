@@ -1,9 +1,9 @@
 
 from django.conf.urls import url
 
-from . import views
+from .views import create, ResultsListView
 
 urlpatterns = [
-    url(r'^$', views.index, name='index'),
-    url(r'^create/$', views.create, name='create'),
+    url(r'^$', ResultsListView.as_view(), name='list'),
+    url(r'^create/$', create, name='create'),
 ]

@@ -5,11 +5,37 @@
 
 {% block content %}
 
-{% if results %}
-    <h1>
-        Fiat Ducato results
-    </h1>
+<h1>
+    Fiat Ducato results
+</h1>
 
+<br />
+
+<form class="form-inline" method="get" action="{% url 'list' %}">
+    {% csrf_token %}
+
+    <div class="form-group">
+        <label
+            class="sr-only"
+            for="searchTitle"
+        >
+            Search...
+        </label>
+        <input
+            id="searchTitle"
+            type="text"
+            name="search"
+            class="form-control"
+            placeholder="Search van..."
+            value="{{ request.GET.search }}"
+        />
+        <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+</form>
+
+<br />
+
+{% if results_list %}
     <table class="table table-bordered table-hover">
         <thead>
             <tr>
@@ -23,7 +49,7 @@
             </tr>
         </thead>
         <tbody>
-        {% for result in results %}
+        {% for result in results_list %}
             <tr>
                 <td>
                     {% if result.photo_url %}
@@ -46,6 +72,23 @@
         {% endfor %}
         </tbody>
     </table>
+    {% if is_paginated %}
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ page_obj.number }} of {{ paginator.num_pages }}.
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">next</a>
+            {% endif %}
+        </span>
+    </div>
+    {% endif %}
 {% else %}
     <p>No results are available.</p>
 {% endif %}
