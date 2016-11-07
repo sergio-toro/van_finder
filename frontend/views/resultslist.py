@@ -16,7 +16,7 @@ class ResultsListView(ListView):
         else:
             queryset = Result.objects.all()
 
-        queryset = queryset.order_by('viewed', '-created', 'pk')
+        queryset = queryset.order_by('viewed', '-rating', '-created', 'pk')
 
         return queryset
 

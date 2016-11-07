@@ -1,3 +1,5 @@
 beautifulsoup4
 django-debug-toolbar
 psycopg2
+scrapy
+scrapy-djangoitem

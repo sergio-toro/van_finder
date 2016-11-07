@@ -97,32 +97,38 @@
         </tbody>
     </table>
     {% if is_paginated %}
-    <div class="pagination">
-        <span class="step-links">
-            {% if page_obj.number > 2 %}
-                <a class="btn btn-secondary btn-sm" href="?page=1">&laquo;</a>
-            {% endif %}
+    <div class="row">
+        <div class="col-xs-4 text-xs-left">
+            Found {{ paginator.count }} results.
 
-            {% if page_obj.has_previous %}
-                <a class="btn btn-secondary btn-sm" href="?page={{ page_obj.previous_page_number }}">&lt;</a>
-            {% endif %}
+        </div>
+        <div class="col-xs-8 text-xs-right">
+        {% if page_obj.number > 2 %}
+            <a class="btn btn-secondary btn-sm" href="?page=1">&laquo;</a>
+        {% endif %}
 
-            <span class="current">
-                page <strong>{{ page_obj.number }}</strong> of {{ paginator.num_pages }}
-            </span>
+        {% if page_obj.has_previous %}
+            <a class="btn btn-secondary btn-sm" href="?page={{ page_obj.previous_page_number }}">&lt;</a>
+        {% endif %}
 
-            {% if page_obj.has_next %}
-                <a class="btn btn-secondary btn-sm" href="?page={{ page_obj.next_page_number }}">&gt;</a>
-            {% endif %}
-            {% if page_obj.number < paginator.num_pages and paginator.num_pages != page_obj.next_page_number %}
-                <a class="btn btn-secondary btn-sm" href="?page={{ paginator.num_pages }}">&raquo;</a>
-            {% endif %}
+        <span class="current">
+            page <strong>{{ page_obj.number }}</strong> of {{ paginator.num_pages }}
         </span>
+
+        {% if page_obj.has_next %}
+            <a class="btn btn-secondary btn-sm" href="?page={{ page_obj.next_page_number }}">&gt;</a>
+        {% endif %}
+        {% if page_obj.number < paginator.num_pages and paginator.num_pages != page_obj.next_page_number %}
+            <a class="btn btn-secondary btn-sm" href="?page={{ paginator.num_pages }}">&raquo;</a>
+        {% endif %}
+        </div>
     </div>
     {% endif %}
 {% else %}
     <p>No results are available.</p>
 {% endif %}
+
+<br />
 
 <script type="text/javascript">
 
