@@ -34,11 +34,16 @@ class ResultsListView(ListView):
             result.viewed = not result.viewed
             result.save()
 
+        if action == 'rating':
+            result.rating = int(request.POST.get('rating', 1))
+            result.save()
+
         response = {
             "success": True,
             "result": {
                 "id": result.id,
                 "viewed": result.viewed,
+                "rating": result.rating,
             },
         }
         return JsonResponse(response)
