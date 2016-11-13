@@ -5,10 +5,12 @@
 # See documentation in:
 # http://doc.scrapy.org/en/latest/topics/items.html
 
-import scrapy
+# import scrapy
+from scrapy_djangoitem import DjangoItem
+from finder.models import Result
 
 
-class SpidersItem(scrapy.Item):
+class ResultItem(DjangoItem):
+    django_model = Result
     # define the fields for your item here like:
     # name = scrapy.Field()
-    pass
