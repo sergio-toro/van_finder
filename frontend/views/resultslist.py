@@ -38,6 +38,10 @@ class ResultsListView(ListView):
             result.rating = int(request.POST.get('rating', 1))
             result.save()
 
+        if action == 'comment':
+            result.comment = request.POST.get('comment', '')
+            result.save()
+
         response = {
             "success": True,
             "result": {

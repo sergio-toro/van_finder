@@ -19,6 +19,10 @@
         cursor: pointer;
         text-decoration: none;
     }
+
+    #results_list img{
+        width: 225px;
+    }
 </style>
 
 <h1>
@@ -58,41 +62,49 @@
                 <th>Photo</th>
                 <th>Title</th>
                 <th>Province</th>
-                <th>Fuel type</th>
+                <th>Fuel</th>
                 <th>Km</th>
                 <th>Year</th>
-                <th>Price</th>
+                <th style="width: 90px;">Price</th>
                 <th style="width: 110px;"></th>
             </tr>
         </thead>
         <tbody>
         {% for result in results_list %}
-            <tr
+            <tbody
                 data-id="{{ result.pk }}"
                 data-rating="{{ result.rating }}"
                 class="result {{ result.viewed|yesno:'viewed,' }}"
             >
-                <td>
-                    {% if result.photo_url %}
-                    <a href="{{ result.url }}" target="_blank">
-                        <img src="{{ result.photo_url }}" alt="{{ result.title }}">
-                    </a>
-                    {% endif %}
-                </td>
-                <td>
-                    <a href="{{ result.url }}" target="_blank">
-                        {{ result.title }}
-                    </a>
-                </td>
-                <td>{{ result.province }}</td>
-                <td>{{ result.fuel_type }}</td>
-                <td>{{ result.km }}</td>
-                <td>{{ result.year }}</td>
-                <td>{{ result.price|localize }} €</td>
-                <td>
-                    <div class="rating"></div>
-                </td>
-            </tr>
+                <tr>
+                    <td rowspan="2">
+                        {% if result.photo_url %}
+                        <a href="{{ result.url }}" target="_blank">
+                            <img src="{{ result.photo_url }}" alt="{{ result.title }}">
+                        </a>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{{ result.url }}" target="_blank">
+                            {{ result.title }}
+                        </a>
+                    </td>
+                    <td>{{ result.province }}</td>
+                    <td>{{ result.fuel_type }}</td>
+                    <td>{{ result.km }}</td>
+                    <td>{{ result.year }}</td>
+                    <td>{{ result.price|localize }} €</td>
+                    <td>
+                        <div class="rating"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="7">
+                        <textarea class="comment form-control">{{ result.comment }}</textarea>
+                    </td>
+                </tr>
+
+            </tbody>
         {% endfor %}
         </tbody>
     </table>
@@ -104,11 +116,11 @@
         </div>
         <div class="col-xs-8 text-xs-right">
         {% if page_obj.number > 2 %}
-            <a class="btn btn-secondary btn-sm" href="?page=1">&laquo;</a>
+            <a class="btn btn-secondary btn-sm" href="?page=1&search={{ request.GET.search }}">&laquo;</a>
         {% endif %}
 
         {% if page_obj.has_previous %}
-            <a class="btn btn-secondary btn-sm" href="?page={{ page_obj.previous_page_number }}">&lt;</a>
+            <a class="btn btn-secondary btn-sm" href="?page={{ page_obj.previous_page_number }}&search={{ request.GET.search }}">&lt;</a>
         {% endif %}
 
         <span class="current">
@@ -116,10 +128,10 @@
         </span>
 
         {% if page_obj.has_next %}
-            <a class="btn btn-secondary btn-sm" href="?page={{ page_obj.next_page_number }}">&gt;</a>
+            <a class="btn btn-secondary btn-sm" href="?page={{ page_obj.next_page_number }}&search={{ request.GET.search }}">&gt;</a>
         {% endif %}
         {% if page_obj.number < paginator.num_pages and paginator.num_pages != page_obj.next_page_number %}
-            <a class="btn btn-secondary btn-sm" href="?page={{ paginator.num_pages }}">&raquo;</a>
+            <a class="btn btn-secondary btn-sm" href="?page={{ paginator.num_pages }}&search={{ request.GET.search }}">&raquo;</a>
         {% endif %}
         </div>
     </div>
@@ -157,8 +169,20 @@
 
         // Event listeners
         $('body')
-            .on('click', '#results_list .rating', function(e) {
+            .on('click', '#results_list .rating, #results_list .comment', function(e) {
                 e.stopPropagation();
+            })
+            .on('change', '#results_list .comment', function(e) {
+                e.stopPropagation();
+
+                var $result = $(this).closest('.result');
+                var data = {
+                    id: $result.data('id'),
+                    comment: $(this).val(),
+                    action: 'comment',
+                };
+
+                $.post(list_url, data)
             })
             .on('click', '#results_list .result', function(e) {
                 var $result = $(this);
